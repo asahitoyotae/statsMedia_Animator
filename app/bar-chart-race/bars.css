@@ -1,0 +1,39 @@
+#bar_chart {
+  min-height: calc(100vh - 100px);
+}
+
+.bar_chart_container {
+  min-height: 100%;
+  max-height: 100%;
+  padding: 20px 50px;
+  padding-bottom: 0;
+}
+
+.change_details {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.change_details label {
+  font-weight: bold;
+}
+.change_details input {
+  border: 1px solid rgb(34, 34, 34, 0.3);
+  border-radius: 8px;
+  padding: 5px;
+}
+.get_file input {
+  width: 100%;
+  overflow: hidden;
+}
+.get_file > div {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0;
+}
+.notes {
+  font-size: 0.7rem;
+}
