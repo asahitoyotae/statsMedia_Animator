@@ -231,8 +231,6 @@ const Bars = () => {
     function labels(svg) {
       let label = d3
         .select(labelsRef.current)
-        //.style("font", "bold 50px var(--sans-serif)")
-        //.style("font-weight", "bold")
         .attr("fill", "black")
         .style("font-variant-numeric", "tabular-nums")
         .attr("text-anchor", "end")
@@ -255,7 +253,7 @@ const Bars = () => {
                 .attr("y", y.bandwidth() / 2)
                 .attr("x", -6)
                 .attr("dy", "0.25em")
-                .attr("font-size", 25)
+                .attr("font-size", 30)
                 .attr("opacity", 0)
                 .text((d) => d.name)
                 .call((text) =>
@@ -308,7 +306,7 @@ const Bars = () => {
                 }
               })
               .attr("opacity", 1)
-              .style("font-size", "25")
+              .style("font-size", "30")
               .style("text-anchor", (d) => {
                 const maxb = x(d3.max(data, (d) => d.value));
                 const thisBar = x(d.value);
