@@ -30,10 +30,10 @@ const Bars = () => {
   const [heights, setHeight] = useState(null);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("barChartRaceData")) || datas;
-    const colorArray =
-      JSON.parse(localStorage.getItem("barChartRaceColors")) || [];
-    const flags = JSON.parse(localStorage.getItem("flags")) || [];
+    const data = datas;
+    const colorArray = [];
+
+    const flags = [];
 
     if (!data || data.length <= 0) return;
 
@@ -76,13 +76,13 @@ const Bars = () => {
     }
 
     function getColor(name) {
-      const colored = colorArray.find((e) => e.name == name);
+      const colored = datas.find((e) => e.name == name);
       if (!colored) return null;
       return colored.color;
     }
 
     function getFlag(name) {
-      const bar = flags.find((e) => e.name == name);
+      const bar = datas.find((e) => e.name == name);
       if (!bar) return "N/A";
       return bar.flag;
     }
@@ -182,10 +182,7 @@ const Bars = () => {
           .attr("y", 0)
           .attr("width", y.bandwidth()) // Set the width of your image
           .attr("height", y.bandwidth()) // Set the height of your image
-          .attr("xlink:href", (d) => {
-            //console.log("flag", d);
-            return `/${d.flag}`;
-          }); // Use data.flag as the image source
+          .attr("xlink:href", (d) => `/${d.flag}`); // Use data.flag as the image source
 
         flags = flags
           .data(data.slice(0, n), (d) => d.name)
