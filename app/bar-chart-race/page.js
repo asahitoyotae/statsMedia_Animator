@@ -26,19 +26,17 @@ const Bars = () => {
   const axisRef = useRef();
   const yearRef = useRef();
   const flagRef = useRef();
+  const valuesRef = useRef();
 
   const [heights, setHeight] = useState(null);
 
   useEffect(() => {
     const data = datas;
-    const colorArray = [];
-
-    const flags = [];
 
     if (!data || data.length <= 0) return;
 
-    const duration = 250;
-    const n = JSON.parse(localStorage.getItem("numberOfBars")) || 10;
+    const duration = 350;
+    const n = JSON.parse(localStorage.getItem("numberOfBars")) || 15;
     const barcorners = JSON.parse(localStorage.getItem("cornerRadius")) || 0;
 
     const marginTop = 16;
@@ -87,7 +85,7 @@ const Bars = () => {
       return bar.flag;
     }
 
-    const k = 10;
+    const k = 3;
 
     const keyframesd = () => {
       const keyframes = [];
@@ -108,6 +106,7 @@ const Bars = () => {
     };
 
     const keyframes = keyframesd();
+    console.log(keyframes.length);
 
     const nameframes = d3.groups(
       keyframes.flatMap(([, data]) => data),
@@ -119,12 +118,12 @@ const Bars = () => {
     );
     const next = new Map(nameframes.flatMap(([, data]) => d3.pairs(data)));
 
-    let cat = JSON.parse(localStorage.getItem("cat"));
+    let cat = true; //JSON.parse(localStorage.getItem("cat"));
 
     function bars(svg) {
       let bar = d3
         .select(barsRef.current)
-        .attr("fill-opacity", 0.7)
+        .attr("fill-opacity", 1)
         .selectAll("rect");
 
       return ([date, data], transition) =>
@@ -157,7 +156,7 @@ const Bars = () => {
               .attr("height", y.bandwidth())
               .style("fill", cat ? (d) => d.color : colors())
               .attr("y", (d) => y(d.rank))
-              .attr("fill-opacity", 0.7)
+              .attr("fill-opacity", 1)
               .attr("width", (d) => x(d.value) - x(0))
           ));
     }
@@ -253,7 +252,7 @@ const Bars = () => {
                 .attr("y", y.bandwidth() / 2)
                 .attr("x", -6)
                 .attr("dy", "0.25em")
-                .attr("font-size", 30)
+                .attr("font-size", 22)
                 .attr("opacity", 0)
                 .text((d) => d.name)
                 .call((text) =>
@@ -297,7 +296,7 @@ const Bars = () => {
 
                 const res = (thisBar / maxb) * 100;
 
-                if (res < 14) {
+                if (res < 25) {
                   return `translate(${x(d.value) + y.bandwidth() * 1.5},${y(
                     d.rank
                   )})`;
@@ -306,14 +305,26 @@ const Bars = () => {
                 }
               })
               .attr("opacity", 1)
-              .style("font-size", "30")
+              .style("font-size", "22")
+              .attr("fill", (d) => {
+                const maxb = x(d3.max(data, (d) => d.value));
+                const thisBar = x(d.value);
+
+                const res = (thisBar / maxb) * 100;
+
+                if (res < 25) {
+                  return "black"; // Align to the left
+                } else {
+                  return "white"; // Default alignment
+                }
+              })
               .style("text-anchor", (d) => {
                 const maxb = x(d3.max(data, (d) => d.value));
                 const thisBar = x(d.value);
 
                 const res = (thisBar / maxb) * 100;
 
-                if (res < 14) {
+                if (res < 25) {
                   return "start"; // Align to the left
                 } else {
                   return "end"; // Default alignment
@@ -325,6 +336,18 @@ const Bars = () => {
                   .tween("text", (d) =>
                     textTween((prev.get(d) || d).value, d.value)
                   )
+                  .attr("fill", (d) => {
+                    const maxb = x(d3.max(data, (d) => d.value));
+                    const thisBar = x(d.value);
+
+                    const res = (thisBar / maxb) * 100;
+
+                    if (res < 25) {
+                      return "black"; // Align to the left
+                    } else {
+                      return "white"; // Default alignment
+                    }
+                  })
               )
           ));
     }
@@ -359,6 +382,8 @@ const Bars = () => {
         g.select(".domain").remove();
       };
     }
+
+    function generateDonut() {}
 
     const formatDate = d3.utcFormat("%Y");
 
@@ -456,14 +481,16 @@ const Bars = () => {
 
       for (let i = 4; i < rows[0].length; i++) {
         for (let j = 1; j < rows.length; j++) {
-          data.push({
-            date: `${rows[0][i]}-01-01T00:00:00.000Z`,
-            name: rows[j][0],
-            category: rows[j][1],
-            color: rows[j][2],
-            flag: rows[j][3],
-            value: rows[j][i],
-          });
+          if (rows[j][i] != null) {
+            data.push({
+              date: `${rows[0][i]}-01-01T00:00:00.000Z`,
+              name: rows[j][0],
+              category: rows[j][1],
+              color: rows[j][2],
+              flag: rows[j][3],
+              value: rows[j][i],
+            });
+          }
         }
       }
       const color = [];
@@ -475,11 +502,12 @@ const Bars = () => {
       for (let i = 1; i < rows.length; i++) {
         flags.push({ name: rows[i][0], flag: rows[i][3] });
       }
+      console.log(data, "data");
 
       //setFile((prev) => ({ ...prev, data: data, color: color }));
-      localStorage.setItem("barChartRaceData", JSON.stringify(data));
-      localStorage.setItem("barChartRaceColors", JSON.stringify(color));
-      localStorage.setItem("flags", JSON.stringify(flags));
+      //localStorage.setItem("barChartRaceData", JSON.stringify(data));
+      //localStorage.setItem("barChartRaceColors", JSON.stringify(color));
+      //localStorage.setItem("flags", JSON.stringify(flags));
       setDataChange((prev) => !prev);
     });
   };
